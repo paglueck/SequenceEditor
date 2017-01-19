@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description:Group xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/table/description/1.1.0" name="SequenceViewer" version="11.1.1.201610211630">
+  <ownedViewpoints name="SequenceViewerVP" modelFileExtension="uml">
+    <ownedRepresentations xsi:type="description_1:EditionTableDescription" name="LifelineView" domainClass="Interaction">
+      <ownedLineMappings name="Lifeline Lines" domainClass="Lifeline">
+        <defaultForeground>
+          <foreGroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+        </defaultForeground>
+        <defaultBackground>
+          <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_blue']"/>
+        </defaultBackground>
+        <ownedSubLines name="Message Lines" domainClass="Message" semanticCandidatesExpression="aql:self.eContainer().eInverse()->select(c | c.eClass().name = 'MessageOccurrenceSpecification')->collect(b | b.message)->select(d | d.sendEvent = null and d.receiveEvent.covered.represents.type.name->first() = self.represents.type.name)->asOrderedSet() + self.eContainer().eInverse()->select(c | c.eClass().name = 'MessageOccurrenceSpecification')->collect(b | b.message)->select(d | d.sendEvent.covered.represents.type.name->first() = self.represents.type.name)->asOrderedSet() ">
+          <defaultForeground>
+            <foreGroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+          </defaultForeground>
+          <defaultBackground>
+            <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_purple']"/>
+          </defaultBackground>
+        </ownedSubLines>
+      </ownedLineMappings>
+      <ownedColumnMappings name="Diagram Column" headerLabelExpression="Diagram" featureName="owner" labelExpression="aql:self.interaction.name"/>
+      <ownedColumnMappings name="Message Order Column" headerLabelExpression="Message Order" featureName="interaction" labelExpression="aql:if self.eClass().name = 'Message' then self.eContainer().eInverse()->select(a | a.eClass().name = 'MessageOccurrenceSpecification')->collect(b | b.message)->indexOf(self) else '' endif"/>
+      <ownedColumnMappings name="Class Column" headerLabelExpression="Class" featureName="represents" labelExpression="aql:self.represents.type.name"/>
+      <ownedColumnMappings name="From Column" headerLabelExpression="From" featureName="sendEvent" labelExpression="aql:self.sendEvent.covered.represents.type.name->first()"/>
+      <ownedColumnMappings name="To Column" headerLabelExpression="To" featureName="receiveEvent" labelExpression="aql:self.receiveEvent.covered.represents.type.name->first()"/>
+      <ownedColumnMappings name="Message Column" headerLabelExpression="Message" featureName="signature " labelExpression="aql:if self.messageSort->toString() = 'asynchSignal' then self.name else self.signature.name endif"/>
+      <ownedColumnMappings name="Message Sort Column" headerLabelExpression="Message Type" featureName="messageSort"/>
+      <ownedColumnMappings name="Parameter Column" headerLabelExpression="Parameter" featureName="sendEvent" labelExpression="aql:if self.receiveEvent.covered.represents.type.ownedOperation->select(a | a.name = self.signature.name).ownedParameter->select(b | b.direction.toString() = 'in')->size() > 0 then self.receiveEvent.covered.represents.type.ownedOperation->select(a | a.name = self.signature.name).ownedParameter->select(b | b.direction.toString() = 'in').name->collect(str | str + ' : ' + self.receiveEvent.covered.represents.type.ownedOperation->select(a | a.name = self.signature.name).ownedParameter->select(b | b.name = str).type.name) else '' endif"/>
+      <ownedColumnMappings name="Return Column" headerLabelExpression="Return" featureName="sendEvent" labelExpression="aql:if self.receiveEvent.covered.represents.type.ownedOperation->select(a | a.name = self.signature.name).ownedParameter->select(b | b.direction.toString() = 'return')->size() > 0 then self.receiveEvent.covered.represents.type.ownedOperation->select(a | a.name = self.signature.name).ownedParameter->select(b | b.direction.toString() = 'return').name->collect(str | str + ' : ' + self.receiveEvent.covered.represents.type.ownedOperation->select(a | a.name = self.signature.name).ownedParameter->select(b | b.name = str).type.name) else '' endif"/>
+      <ownedColumnMappings name="Destruct Column" headerLabelExpression="Destruct" featureName="owner" labelExpression="[if self.eClass() = uml::Lifeline then if self.eInverse(uml::DestructionOccurrenceSpecification)->size() > 0 then 'y' else 'n' endif else '' endif/]"/>
+    </ownedRepresentations>
+    <ownedRepresentations xsi:type="description_1:EditionTableDescription" name="MessageView" domainClass="Interaction">
+      <ownedLineMappings name="Messages" domainClass="Message" semanticCandidatesExpression="[self.eInverse(uml::MessageOccurrenceSpecification)->collect(b | b.message)/]">
+        <defaultForeground>
+          <foreGroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+        </defaultForeground>
+        <defaultBackground>
+          <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_blue']"/>
+        </defaultBackground>
+      </ownedLineMappings>
+      <ownedColumnMappings name="Diagram" headerLabelExpression="Diagram" featureName="owner" labelExpression="aql:self.interaction.name"/>
+      <ownedColumnMappings name="ID" headerLabelExpression="ID" featureName="interaction" labelExpression="[self.eContainer().eInverse(uml::MessageOccurrenceSpecification)->collect(b | b.message)->asOrderedSet()->indexOf(self)/]"/>
+      <ownedColumnMappings name="ServiceTest" headerLabelExpression="ServiceTest" featureName="owner" labelExpression="service:testService()"/>
+      <ownedColumnMappings name="From" headerLabelExpression="From" featureName="sendEvent" labelExpression="aql:self.sendEvent.covered.represents.type.name->first()"/>
+      <ownedColumnMappings name="To" headerLabelExpression="To" featureName="receiveEvent" labelExpression="aql:self.receiveEvent.covered.represents.type.name->first()"/>
+      <ownedColumnMappings name="Message" headerLabelExpression="Message" featureName="signature" labelExpression="aql:if self.messageSort->toString() = 'asynchSignal' then self.name else self.signature.name endif"/>
+      <ownedColumnMappings name="Message Sort" headerLabelExpression="Message Kind" featureName="messageSort"/>
+      <ownedColumnMappings name="Parameters" headerLabelExpression="Parameters" featureName="sendEvent" labelExpression="aql:if self.receiveEvent.covered.represents.type.ownedOperation->select(a | a.name = self.signature.name).ownedParameter->select(b | b.direction.toString() = 'in')->size() > 0 then self.receiveEvent.covered.represents.type.ownedOperation->select(a | a.name = self.signature.name).ownedParameter->select(b | b.direction.toString() = 'in').name->collect(str | str + ' : ' + self.receiveEvent.covered.represents.type.ownedOperation->select(a | a.name = self.signature.name).ownedParameter->select(b | b.name = str).type.name) else '' endif"/>
+      <ownedColumnMappings name="Return" headerLabelExpression="Return" featureName="sendEvent" labelExpression="aql:if self.receiveEvent.covered.represents.type.ownedOperation->select(a | a.name = self.signature.name).ownedParameter->select(b | b.direction.toString() = 'return')->size() > 0 then self.receiveEvent.covered.represents.type.ownedOperation->select(a | a.name = self.signature.name).ownedParameter->select(b | b.direction.toString() = 'return').name->collect(str | str + ' : ' + self.receiveEvent.covered.represents.type.ownedOperation->select(a | a.name = self.signature.name).ownedParameter->select(b | b.name = str).type.name) else '' endif"/>
+    </ownedRepresentations>
+    <ownedJavaExtensions qualifiedClassName="SequenceViewer.Services"/>
+  </ownedViewpoints>
+</description:Group>
