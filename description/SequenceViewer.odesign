@@ -1,36 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<description:Group xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/table/description/1.1.0" name="SequenceViewer" version="11.1.1.201610211630">
+<description:Group xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/table/description/1.1.0" xmlns:tool="http://www.eclipse.org/sirius/description/tool/1.1.0" name="SequenceViewer" version="11.1.1.201610211630">
   <ownedViewpoints name="SequenceViewerVP" modelFileExtension="uml">
     <ownedRepresentations xsi:type="description_1:EditionTableDescription" name="LifelineView" domainClass="Interaction">
       <ownedLineMappings name="Lifeline Lines" domainClass="Lifeline">
         <defaultForeground>
-          <foreGroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+          <foreGroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='white']"/>
         </defaultForeground>
         <defaultBackground>
-          <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_blue']"/>
+          <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='dark_blue']"/>
         </defaultBackground>
-        <ownedSubLines name="Message Lines" domainClass="Message" semanticCandidatesExpression="aql:self.eContainer().eInverse()->select(c | c.eClass().name = 'MessageOccurrenceSpecification')->collect(b | b.message)->select(d | d.sendEvent = null and d.receiveEvent.covered.represents.type.name->first() = self.represents.type.name)->asOrderedSet() + self.eContainer().eInverse()->select(c | c.eClass().name = 'MessageOccurrenceSpecification')->collect(b | b.message)->select(d | d.sendEvent.covered.represents.type.name->first() = self.represents.type.name)->asOrderedSet() ">
+        <ownedSubLines name="StateInvariant Lines" domainClass="StateInvariant" semanticCandidatesExpression="[self.eInverse(uml::StateInvariant)/]">
+          <defaultForeground>
+            <foreGroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='white']"/>
+          </defaultForeground>
+          <defaultBackground>
+            <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='blue']"/>
+          </defaultBackground>
+        </ownedSubLines>
+        <ownedSubLines name="Message Lines" domainClass="Message" semanticCandidatesExpression="aql:self.eContainer().eAllContents()->select(c | c.eClass().name = 'MessageOccurrenceSpecification')->collect(b | b.message)->select(d | d.sendEvent = null and d.receiveEvent.covered.represents.type.name->first() = self.represents.type.name)->asOrderedSet() + self.eContainer().eAllContents()->select(c | c.eClass().name = 'MessageOccurrenceSpecification')->collect(b | b.message)->select(d | d.sendEvent.covered.represents.type.name->first() = self.represents.type.name)->asOrderedSet() ">
           <defaultForeground>
             <foreGroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
           </defaultForeground>
           <defaultBackground>
-            <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_purple']"/>
+            <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_blue']"/>
           </defaultBackground>
         </ownedSubLines>
       </ownedLineMappings>
-      <ownedColumnMappings name="Diagram Column" headerLabelExpression="Diagram" featureName="owner" labelExpression="aql:self.interaction.name"/>
-      <ownedColumnMappings name="Message Order Column" headerLabelExpression="Message Order" featureName="interaction" labelExpression="aql:if self.eClass().name = 'Message' then self.eContainer().eInverse()->select(a | a.eClass().name = 'MessageOccurrenceSpecification')->collect(b | b.message)->indexOf(self) else '' endif"/>
+      <ownedCreateLine name="New Message" precondition="true">
+        <variables name="root" documentation="The semantic root element of the table."/>
+        <variables name="element" documentation="The semantic currently edited element."/>
+        <variables name="container" documentation="The semantic element corresponding to the view container."/>
+        <firstModelOperation xsi:type="tool:ExternalJavaAction" name="NewMessageAction" precondition="true" id="SequenceViewer.DialogInvoker">
+          <parameters name="interaction" value="var:self"/>
+          <parameters name="type" value="'newNM'"/>
+        </firstModelOperation>
+      </ownedCreateLine>
+      <ownedCreateLine name="New StateInvariant" precondition="true">
+        <variables name="root" documentation="The semantic root element of the table."/>
+        <variables name="element" documentation="The semantic currently edited element."/>
+        <variables name="container" documentation="The semantic element corresponding to the view container."/>
+        <firstModelOperation xsi:type="tool:ExternalJavaAction" name="NewStateInvariantAction" precondition="true" id="SequenceViewer.DialogInvoker">
+          <parameters name="interaction" value="var:self"/>
+          <parameters name="type" value="'newSI'"/>
+        </firstModelOperation>
+      </ownedCreateLine>
+      <ownedCreateLine name="New Lifeline" precondition="true">
+        <variables name="root" documentation="The semantic root element of the table."/>
+        <variables name="element" documentation="The semantic currently edited element."/>
+        <variables name="container" documentation="The semantic element corresponding to the view container."/>
+        <firstModelOperation xsi:type="tool:ExternalJavaAction" name="NewLifelineAction" precondition="true" id="SequenceViewer.DialogInvoker">
+          <parameters name="interaction" value="var:self"/>
+          <parameters name="type" value="'newLL'"/>
+        </firstModelOperation>
+      </ownedCreateLine>
+      <ownedColumnMappings name="Diagram Column" headerLabelExpression="Diagram" featureName="owner" labelExpression="aql:self.eContainer().name"/>
+      <ownedColumnMappings name="Message Order Column" headerLabelExpression="Message Order" featureName="interaction" labelExpression="aql:if self.eClass().name = 'Message' then self.eContainer().eAllContents()->select(a | a.eClass().name = 'MessageOccurrenceSpecification')->collect(b | b.message)->asOrderedSet()->indexOf(self) else '' endif"/>
       <ownedColumnMappings name="Class Column" headerLabelExpression="Class" featureName="represents" labelExpression="aql:self.represents.type.name"/>
       <ownedColumnMappings name="From Column" headerLabelExpression="From" featureName="sendEvent" labelExpression="aql:self.sendEvent.covered.represents.type.name->first()"/>
       <ownedColumnMappings name="To Column" headerLabelExpression="To" featureName="receiveEvent" labelExpression="aql:self.receiveEvent.covered.represents.type.name->first()"/>
-      <ownedColumnMappings name="Message Column" headerLabelExpression="Message" featureName="signature " labelExpression="aql:if self.messageSort->toString() = 'asynchSignal' then self.name else self.signature.name endif"/>
-      <ownedColumnMappings name="Message Sort Column" headerLabelExpression="Message Type" featureName="messageSort"/>
+      <ownedColumnMappings name="Message Column" headerLabelExpression="Message" featureName="signature" labelExpression="aql:if self.messageSort->toString() = 'asynchSignal' then self.name else self.signature.name endif"/>
+      <ownedColumnMappings name="Message Kind Column" headerLabelExpression="Message Kind" featureName="messageKind"/>
+      <ownedColumnMappings name="Message Sort Column" headerLabelExpression="Message Sort" featureName="messageSort"/>
       <ownedColumnMappings name="Parameter Column" headerLabelExpression="Parameter" featureName="sendEvent" labelExpression="aql:if self.receiveEvent.covered.represents.type.ownedOperation->select(a | a.name = self.signature.name).ownedParameter->select(b | b.direction.toString() = 'in')->size() > 0 then self.receiveEvent.covered.represents.type.ownedOperation->select(a | a.name = self.signature.name).ownedParameter->select(b | b.direction.toString() = 'in').name->collect(str | str + ' : ' + self.receiveEvent.covered.represents.type.ownedOperation->select(a | a.name = self.signature.name).ownedParameter->select(b | b.name = str).type.name) else '' endif"/>
       <ownedColumnMappings name="Return Column" headerLabelExpression="Return" featureName="sendEvent" labelExpression="aql:if self.receiveEvent.covered.represents.type.ownedOperation->select(a | a.name = self.signature.name).ownedParameter->select(b | b.direction.toString() = 'return')->size() > 0 then self.receiveEvent.covered.represents.type.ownedOperation->select(a | a.name = self.signature.name).ownedParameter->select(b | b.direction.toString() = 'return').name->collect(str | str + ' : ' + self.receiveEvent.covered.represents.type.ownedOperation->select(a | a.name = self.signature.name).ownedParameter->select(b | b.name = str).type.name) else '' endif"/>
       <ownedColumnMappings name="Destruct Column" headerLabelExpression="Destruct" featureName="owner" labelExpression="[if self.eClass() = uml::Lifeline then if self.eInverse(uml::DestructionOccurrenceSpecification)->size() > 0 then 'y' else 'n' endif else '' endif/]"/>
+      <ownedColumnMappings name="Constraint Column" headerLabelExpression="Constraint" featureName="invariant" labelExpression="aql:self.invariant.specification.value"/>
     </ownedRepresentations>
     <ownedRepresentations xsi:type="description_1:EditionTableDescription" name="MessageView" domainClass="Interaction">
-      <ownedLineMappings name="Messages" domainClass="Message" semanticCandidatesExpression="[self.eInverse(uml::MessageOccurrenceSpecification)->collect(b | b.message)/]">
+      <ownedLineMappings name="Messages" domainClass="MessageOccurrenceSpecification" semanticCandidatesExpression="[self.eInverse(uml::MessageOccurrenceSpecification)/]">
         <defaultForeground>
           <foreGroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
         </defaultForeground>
@@ -38,12 +75,80 @@
           <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_blue']"/>
         </defaultBackground>
       </ownedLineMappings>
-      <ownedColumnMappings name="Diagram" headerLabelExpression="Diagram" featureName="owner" labelExpression="aql:self.interaction.name"/>
+      <ownedLineMappings name="Combined Fragments Lines" domainClass="CombinedFragment"/>
+      <ownedColumnMappings name="Diagram" headerLabelExpression="Diagram" featureName="owner" labelExpression="aql:self.eContainer().name"/>
       <ownedColumnMappings name="ID" headerLabelExpression="ID" featureName="interaction" labelExpression="[self.eContainer().eInverse(uml::MessageOccurrenceSpecification)->collect(b | b.message)->asOrderedSet()->indexOf(self)/]"/>
       <ownedColumnMappings name="ServiceTest" headerLabelExpression="ServiceTest" featureName="owner" labelExpression="service:testService()"/>
       <ownedColumnMappings name="From" headerLabelExpression="From" featureName="sendEvent" labelExpression="aql:self.sendEvent.covered.represents.type.name->first()"/>
       <ownedColumnMappings name="To" headerLabelExpression="To" featureName="receiveEvent" labelExpression="aql:self.receiveEvent.covered.represents.type.name->first()"/>
       <ownedColumnMappings name="Message" headerLabelExpression="Message" featureName="signature" labelExpression="aql:if self.messageSort->toString() = 'asynchSignal' then self.name else self.signature.name endif"/>
+      <ownedColumnMappings name="Message Sort" headerLabelExpression="Message Kind" featureName="messageSort"/>
+      <ownedColumnMappings name="Parameters" headerLabelExpression="Parameters" featureName="sendEvent" labelExpression="aql:if self.receiveEvent.covered.represents.type.ownedOperation->select(a | a.name = self.signature.name).ownedParameter->select(b | b.direction.toString() = 'in')->size() > 0 then self.receiveEvent.covered.represents.type.ownedOperation->select(a | a.name = self.signature.name).ownedParameter->select(b | b.direction.toString() = 'in').name->collect(str | str + ' : ' + self.receiveEvent.covered.represents.type.ownedOperation->select(a | a.name = self.signature.name).ownedParameter->select(b | b.name = str).type.name) else '' endif"/>
+      <ownedColumnMappings name="Return" headerLabelExpression="Return" featureName="sendEvent" labelExpression="aql:if self.receiveEvent.covered.represents.type.ownedOperation->select(a | a.name = self.signature.name).ownedParameter->select(b | b.direction.toString() = 'return')->size() > 0 then self.receiveEvent.covered.represents.type.ownedOperation->select(a | a.name = self.signature.name).ownedParameter->select(b | b.direction.toString() = 'return').name->collect(str | str + ' : ' + self.receiveEvent.covered.represents.type.ownedOperation->select(a | a.name = self.signature.name).ownedParameter->select(b | b.name = str).type.name) else '' endif"/>
+    </ownedRepresentations>
+    <ownedRepresentations xsi:type="description_1:EditionTableDescription" name="TestView" domainClass="Interaction">
+      <ownedLineMappings name="Element Lines" domainClass="Element" semanticCandidatesExpression="[self.eInverse(uml::Element)->select(a | a.eClass().name = 'MessageOccurrenceSpecification' or a.eClass().name = 'CombinedFragment')->collect(b | if b.eClass().name = 'MessageOccurrenceSpecification' then b.eGet('message') else b endif)/]">
+        <defaultForeground>
+          <foreGroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+        </defaultForeground>
+        <foregroundConditionalStyle predicateExpression="[self.eClass() = uml::CombinedFragment/]">
+          <style>
+            <foreGroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='white']"/>
+          </style>
+        </foregroundConditionalStyle>
+        <defaultBackground>
+          <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_blue']"/>
+        </defaultBackground>
+        <backgroundConditionalStyle predicateExpression="[self.eClass() = uml::CombinedFragment/]">
+          <style>
+            <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='blue']"/>
+          </style>
+        </backgroundConditionalStyle>
+        <ownedSubLines name="CF Messages" domainClass="Message" semanticCandidatesExpression="aql:self.operand.fragment->select(a | a.eClass().name = 'MessageOccurrenceSpecification')->collect(b | b.message)->asOrderedSet()">
+          <defaultForeground>
+            <foreGroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+          </defaultForeground>
+          <defaultBackground>
+            <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_blue']"/>
+          </defaultBackground>
+        </ownedSubLines>
+      </ownedLineMappings>
+      <ownedLineMappings name="Interaction" domainClass="Interaction5" semanticCandidatesExpression="aql:self"/>
+      <ownedCreateLine name="New Message" precondition="true">
+        <variables name="root" documentation="The semantic root element of the table."/>
+        <variables name="element" documentation="The semantic currently edited element."/>
+        <variables name="container" documentation="The semantic element corresponding to the view container."/>
+        <firstModelOperation xsi:type="tool:ExternalJavaAction" name="NewMessageAction" precondition="true" id="SequenceViewer.DialogInvoker">
+          <parameters name="interaction" value="var:self"/>
+          <parameters name="type" value="'newNM'"/>
+        </firstModelOperation>
+      </ownedCreateLine>
+      <ownedCreateLine name="New StateInvariant" precondition="true">
+        <variables name="root" documentation="The semantic root element of the table."/>
+        <variables name="element" documentation="The semantic currently edited element."/>
+        <variables name="container" documentation="The semantic element corresponding to the view container."/>
+        <firstModelOperation xsi:type="tool:ExternalJavaAction" name="NewStateInvariantAction" precondition="true" id="SequenceViewer.DialogInvoker">
+          <parameters name="interaction" value="var:self"/>
+          <parameters name="type" value="'newSI'"/>
+        </firstModelOperation>
+      </ownedCreateLine>
+      <ownedCreateLine name="New Lifeline" precondition="true">
+        <variables name="root" documentation="The semantic root element of the table."/>
+        <variables name="element" documentation="The semantic currently edited element."/>
+        <variables name="container" documentation="The semantic element corresponding to the view container."/>
+        <firstModelOperation xsi:type="tool:ExternalJavaAction" name="NewLifelineAction" precondition="true" id="SequenceViewer.DialogInvoker">
+          <parameters name="interaction" value="var:self"/>
+          <parameters name="type" value="'newLL'"/>
+        </firstModelOperation>
+      </ownedCreateLine>
+      <ownedColumnMappings name="Diagram" headerLabelExpression="Diagram" featureName="owner" labelExpression="aql:self.eContainer().name"/>
+      <ownedColumnMappings name="ID" headerLabelExpression="ID" featureName="interaction" labelExpression="aql:self.eContainer().eAllContents()->select(a | a.eClass().name = 'MessageOccurrenceSpecification')->collect(b | b.message)->asOrderedSet()->indexOf(self)"/>
+      <ownedColumnMappings name="Type" headerLabelExpression="Type" featureName="interactionOperator"/>
+      <ownedColumnMappings name="ServiceTest" headerLabelExpression="ServiceTest" featureName="owner" labelExpression="service:testService()"/>
+      <ownedColumnMappings name="From" headerLabelExpression="From" featureName="sendEvent" labelExpression="aql:self.sendEvent.covered.represents.type.name->first()"/>
+      <ownedColumnMappings name="To" headerLabelExpression="To" featureName="receiveEvent" labelExpression="aql:self.receiveEvent.covered.represents.type.name->first()"/>
+      <ownedColumnMappings name="Message" headerLabelExpression="Message" featureName="signature" labelExpression="aql:if self.messageSort->toString() = 'asynchSignal' then self.name else self.signature.name endif"/>
+      <ownedColumnMappings name="Message Kind Column" headerLabelExpression="Message Kind" featureName="messageKind"/>
       <ownedColumnMappings name="Message Sort" headerLabelExpression="Message Kind" featureName="messageSort"/>
       <ownedColumnMappings name="Parameters" headerLabelExpression="Parameters" featureName="sendEvent" labelExpression="aql:if self.receiveEvent.covered.represents.type.ownedOperation->select(a | a.name = self.signature.name).ownedParameter->select(b | b.direction.toString() = 'in')->size() > 0 then self.receiveEvent.covered.represents.type.ownedOperation->select(a | a.name = self.signature.name).ownedParameter->select(b | b.direction.toString() = 'in').name->collect(str | str + ' : ' + self.receiveEvent.covered.represents.type.ownedOperation->select(a | a.name = self.signature.name).ownedParameter->select(b | b.name = str).type.name) else '' endif"/>
       <ownedColumnMappings name="Return" headerLabelExpression="Return" featureName="sendEvent" labelExpression="aql:if self.receiveEvent.covered.represents.type.ownedOperation->select(a | a.name = self.signature.name).ownedParameter->select(b | b.direction.toString() = 'return')->size() > 0 then self.receiveEvent.covered.represents.type.ownedOperation->select(a | a.name = self.signature.name).ownedParameter->select(b | b.direction.toString() = 'return').name->collect(str | str + ' : ' + self.receiveEvent.covered.represents.type.ownedOperation->select(a | a.name = self.signature.name).ownedParameter->select(b | b.name = str).type.name) else '' endif"/>

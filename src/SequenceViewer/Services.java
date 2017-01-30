@@ -17,8 +17,7 @@ public class Services {
     
     public String testService(EObject e) {
     	//Message m = (Message) e;
-    	return "";
+    	return Message.class.getName();
     }
-    
-    
+  
 }
