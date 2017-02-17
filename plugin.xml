@@ -10,10 +10,6 @@
   <extension
         point="org.eclipse.sirius.externalJavaAction">
      <javaActions
-           actionClass="SequenceViewer.ExternalAction"
-           id="SequenceViewer.ExternalAction">
-     </javaActions>
-     <javaActions
            actionClass="SequenceViewer.DialogInvoker"
            id="SequenceViewer.DialogInvoker">
      </javaActions>

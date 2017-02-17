@@ -13,10 +13,13 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.uml2.uml.Interaction;
 import org.eclipse.uml2.uml.Lifeline;
+import org.eclipse.uml2.uml.LiteralString;
+import org.eclipse.uml2.uml.StateInvariant;
+import org.eclipse.uml2.uml.ValueSpecification;
 
 
 @SuppressWarnings("serial")
-public class CreateInvariantDialog extends JFrame {
+public class StateInvariantDialog extends JFrame {
 	
     // Variables declaration
 	private JLabel lblName;
@@ -31,25 +34,34 @@ public class CreateInvariantDialog extends JFrame {
 	private JPanel contentPane;
 
 	private Interaction interaction;
+	private StateInvariant editInvariant;
+	private ModelUtilities.DialogOps op;
 	// End of variables declaration    
 
 
-    public CreateInvariantDialog(Interaction inter) {
+    public StateInvariantDialog(Interaction inter, ModelUtilities.DialogOps operation) {
         super();
         this.interaction = inter;
+        this.op = operation;
+        this.setWindowProperties("Create New StateInvariant");
         create();
         this.setVisible(true);
     }    
 
-    private void create() {
-    	this.setTitle("Create New StateInvariant");
-    	this.setLocation(new Point(500,500));
-    	this.setSize(new Dimension(400, 150));
-    	this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-    	this.setResizable(false);
-    	
+    public StateInvariantDialog(Interaction inter, ModelUtilities.DialogOps operation, StateInvariant editInvariant) {
+        super();
+        this.interaction = inter;
+        this.op = operation;
+        this.editInvariant = editInvariant;
+        this.setWindowProperties("Edit StateInvariant");
+        create();
+        this.setEditProperties();
+        this.setVisible(true);
+    }    
+    
+    private void create() {    	
     	EList<Lifeline> lifelines = interaction.getLifelines();
-    	String[] strLifelines = Utilities.lifelinesToStrings((Lifeline[]) lifelines.toArray());
+    	String[] strLifelines = ModelUtilities.lifelinesToStrings((Lifeline[]) lifelines.toArray());
 
         this.initializeComponents(strLifelines);
     	SpringLayout layout = new SpringLayout();
@@ -69,15 +81,20 @@ public class CreateInvariantDialog extends JFrame {
 		        domain.getCommandStack().execute(new RecordingCommand(domain) {
 
 		            @Override
-		            protected void doExecute() {                
-		            	ModelOperations.createStateInvariant(interaction, txtName.getText(), lifelines.get(cmbLifeline.getSelectedIndex()), txtConstraint.getText());
+		            protected void doExecute() {            
+		            	if (op == ModelUtilities.DialogOps.EDIT) {
+		            		ModelOperations.editStateInvariant(interaction, txtName.getText(), lifelines.get(cmbLifeline.getSelectedIndex()), txtConstraint.getText(), editInvariant);
+		            	} else {
+		            		ModelOperations.createStateInvariant(interaction, txtName.getText(), lifelines.get(cmbLifeline.getSelectedIndex()), txtConstraint.getText());
+		            	}
+		            	
 		            }
 		        });			
-		        SwingUtilities.getWindowAncestor((JButton)e.getSource()).dispose();;
+		        SwingUtilities.getWindowAncestor((JButton)e.getSource()).dispose();
 			}
     		
     	});
-    	btnCancel.addActionListener(Utilities.getCancelActionListener());
+    	btnCancel.addActionListener(ModelUtilities.getCancelActionListener());
     }
     
     public void initializeComponents(String[] strLifelines) {
@@ -107,5 +124,20 @@ public class CreateInvariantDialog extends JFrame {
         lblName.setLabelFor(txtName);
     	lblLifeline.setLabelFor(cmbLifeline);
     	lblConstraint.setLabelFor(txtConstraint);    	
+    }
+    
+    public void setWindowProperties(String title) {
+    	this.setTitle(title);
+    	this.setLocation(new Point(500,500));
+    	this.setSize(new Dimension(400, 150));
+    	this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+    	this.setResizable(false);
+    }
+    
+    public void setEditProperties() {
+    	txtName.setText(this.editInvariant.getName());
+    	cmbLifeline.setSelectedItem(this.editInvariant.getCovereds().get(0).getName());
+    	LiteralString sp = (LiteralString) this.editInvariant.getInvariant().getSpecification();
+    	txtConstraint.setText(sp.getValue());
     }
 }

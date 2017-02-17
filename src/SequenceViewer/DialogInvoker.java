@@ -1,62 +1,79 @@
 package SequenceViewer;
 
-import org.eclipse.jface.dialogs.IInputValidator;
-import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.jface.window.Window;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.uml2.uml.Element;
-import org.eclipse.uml2.uml.Interaction;
-import org.eclipse.uml2.uml.Lifeline;
-import org.eclipse.uml2.uml.Model;
-
-import java.awt.BorderLayout;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
-import javax.swing.JTextField;
-
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.sirius.business.api.action.AbstractExternalJavaAction;
 import org.eclipse.sirius.tools.api.ui.IExternalJavaAction;
+import org.eclipse.uml2.uml.CombinedFragment;
+import org.eclipse.uml2.uml.Interaction;
+import org.eclipse.uml2.uml.Lifeline;
+import org.eclipse.uml2.uml.Message;
+import org.eclipse.uml2.uml.StateInvariant;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
 public class DialogInvoker extends AbstractExternalJavaAction implements IExternalJavaAction {
-	
-	@Override
-	public boolean canExecute(Collection<? extends EObject> args) {
-		return true;
-	}
-	
-	private DialogInputServices dialogInputServices = new DialogInputServices();
-	
-	@Override
-	public void execute(Collection<? extends EObject> args, Map<String,	Object> arg1) {
-		String s = (String) arg1.get("type");
-		Interaction t = (Interaction) arg1.get("interaction");
-		System.out.println("Class: " + t.eClass().getName());
-		System.out.println("Name: " + t.getName());
-		System.out.println(s);
-		Lifeline l1 = t.getLifeline("AddMoviesLifeline");
-		Lifeline l2 = t.getLifeline("MainFrameLifeline");
-		if (s.equals("'newLL'")) {
-			CreateLifelineDialog cld = new CreateLifelineDialog(t);
-		} else if (s.equals("'newNM'")) {
-			CreateMessageDialog cmd = new CreateMessageDialog(t);
-		} else if (s.equals("'newSI'")) {
-			CreateInvariantDialog cid = new CreateInvariantDialog(t);
-		}
-			
-			
-		
-	}
-	
-	
+
+    @Override
+    public boolean canExecute(final Collection<? extends EObject> args) {
+        return true;
+    }
+
+    @Override
+    public void execute(final Collection<? extends EObject> args, final Map<String, Object> arg1) {
+        final String elementType = (String) arg1.get("type");
+        final String operationType = (String) arg1.get("op");
+        final Interaction t = (Interaction) arg1.get("interaction");
+        final Lifeline l = (Lifeline) arg1.get("lifeline");
+        final StateInvariant i = (StateInvariant) arg1.get("stateinvariant");
+        final CombinedFragment cf = (CombinedFragment) arg1.get("combinedfragment");
+        final Message msg = (Message) arg1.get("message");
+        
+        
+        if (elementType.equals("'LL'")) {
+            LifelineDialog cld;
+            if (operationType.equals("'edit'")) {
+                cld = new LifelineDialog(l.getInteraction(), ModelUtilities.DialogOps.EDIT, l);
+            } else if (operationType.contentEquals("'del'")) {
+                ModelOperations.deleteLifeline(l.getInteraction(), l);
+
+            } else {
+                cld = new LifelineDialog(t, ModelUtilities.DialogOps.CREATE);
+            }
+        } else if (elementType.equals("'Msg'")) {
+            MessageDialog cmd;
+            if (operationType.equals("'edit'")) {
+                cmd = new MessageDialog(msg.getInteraction(), ModelUtilities.DialogOps.EDIT, msg);
+            } else if (operationType.equals("'del'")) {
+                ModelOperations.deleteMessage(msg);
+            } else if (operationType.equals("'create'")) {
+                cmd = new MessageDialog(t, ModelUtilities.DialogOps.CREATE);
+            }
+        } else if (elementType.equals("'SI'")) {
+            StateInvariantDialog cid;
+            if (operationType.equals("'edit'")) {
+                cid = new StateInvariantDialog(i.getEnclosingInteraction(), ModelUtilities.DialogOps.EDIT, i);
+            } else if (operationType.equals("'del'")) {
+                ModelOperations.deleteStateInvariant(i.getEnclosingInteraction(), i);
+            } else {
+                cid = new StateInvariantDialog(t, ModelUtilities.DialogOps.CREATE);
+            }
+        } else if (elementType.equals("'CF'")) {
+            CombinedFragmentDialog ccd;
+            if (operationType.equals("'edit'")) {
+                ccd = new CombinedFragmentDialog(cf.getEnclosingInteraction(), ModelUtilities.DialogOps.EDIT, cf);
+            } else {
+                ccd = new CombinedFragmentDialog(t, ModelUtilities.DialogOps.CREATE);
+            }
+        } else if (elementType.equals("'IO'")) {
+            OperandDialog od;
+            if (operationType.equals("'edit'")) {
+                od = new OperandDialog(cf.getEnclosingInteraction(), ModelUtilities.DialogOps.EDIT, cf);
+            } else {
+                od = new OperandDialog(cf, ModelUtilities.DialogOps.CREATE);
+            }
+        }
+
+    }
 
 }
-

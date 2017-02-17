@@ -16,6 +16,25 @@
           <defaultBackground>
             <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='blue']"/>
           </defaultBackground>
+          <create name="Edit StateInvariant" precondition="true">
+            <variables name="root" documentation="The semantic root element of the table."/>
+            <variables name="element" documentation="The semantic currently edited element."/>
+            <variables name="container" documentation="The semantic element corresponding to the view container."/>
+            <firstModelOperation xsi:type="tool:ExternalJavaAction" name="EditStateInvariantAction" precondition="true" id="SequenceViewer.DialogInvoker">
+              <parameters name="stateinvariant" value="var:self"/>
+              <parameters name="op" value="'edit'"/>
+              <parameters name="type" value="'SI'"/>
+            </firstModelOperation>
+          </create>
+          <delete name="Delete StateInvariant" precondition="true">
+            <variables name="element" documentation="The semantic currently edited element."/>
+            <variables name="root" documentation="The semantic root element of the table."/>
+            <firstModelOperation xsi:type="tool:ExternalJavaAction" name="DeleteStateInvariantAction" precondition="true" id="SequenceViewer.DialogInvoker">
+              <parameters name="stateinvariant" value="var:self"/>
+              <parameters name="op" value="'del'"/>
+              <parameters name="type" value="'SI'"/>
+            </firstModelOperation>
+          </delete>
         </ownedSubLines>
         <ownedSubLines name="Message Lines" domainClass="Message" semanticCandidatesExpression="aql:self.eContainer().eAllContents()->select(c | c.eClass().name = 'MessageOccurrenceSpecification')->collect(b | b.message)->select(d | d.sendEvent = null and d.receiveEvent.covered.represents.type.name->first() = self.represents.type.name)->asOrderedSet() + self.eContainer().eAllContents()->select(c | c.eClass().name = 'MessageOccurrenceSpecification')->collect(b | b.message)->select(d | d.sendEvent.covered.represents.type.name->first() = self.represents.type.name)->asOrderedSet() ">
           <defaultForeground>
@@ -24,7 +43,45 @@
           <defaultBackground>
             <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_blue']"/>
           </defaultBackground>
+          <create name="Edit Message" precondition="true">
+            <variables name="root" documentation="The semantic root element of the table."/>
+            <variables name="element" documentation="The semantic currently edited element."/>
+            <variables name="container" documentation="The semantic element corresponding to the view container."/>
+            <firstModelOperation xsi:type="tool:ExternalJavaAction" name="EditMessageAction" precondition="true" id="SequenceViewer.DialogInvoker">
+              <parameters name="message" value="var:self"/>
+              <parameters name="op" value="'edit'"/>
+              <parameters name="type" value="'Msg'"/>
+            </firstModelOperation>
+          </create>
+          <delete name="Delete Message" precondition="true">
+            <variables name="element" documentation="The semantic currently edited element."/>
+            <variables name="root" documentation="The semantic root element of the table."/>
+            <firstModelOperation xsi:type="tool:ExternalJavaAction" name="DeleteMessageAction" precondition="true" id="SequenceViewer.DialogInvoker">
+              <parameters name="message" value="var:self"/>
+              <parameters name="op" value="'del'"/>
+              <parameters name="type" value="'Msg'"/>
+            </firstModelOperation>
+          </delete>
         </ownedSubLines>
+        <create name="Edit Lifeline" precondition="true">
+          <variables name="root" documentation="The semantic root element of the table."/>
+          <variables name="element" documentation="The semantic currently edited element."/>
+          <variables name="container" documentation="The semantic element corresponding to the view container."/>
+          <firstModelOperation xsi:type="tool:ExternalJavaAction" name="EditLifelineAction" precondition="true" id="SequenceViewer.DialogInvoker">
+            <parameters name="lifeline" value="var:self"/>
+            <parameters name="op" value="'edit'"/>
+            <parameters name="type" value="'LL'"/>
+          </firstModelOperation>
+        </create>
+        <delete name="Delete Lifeline" precondition="true">
+          <variables name="element" documentation="The semantic currently edited element."/>
+          <variables name="root" documentation="The semantic root element of the table."/>
+          <firstModelOperation xsi:type="tool:ExternalJavaAction" name="DeleteLifelineAction" precondition="true" id="SequenceViewer.DialogInvoker">
+            <parameters name="lifeline" value="var:self"/>
+            <parameters name="op" value="'del'"/>
+            <parameters name="type" value="'LL'"/>
+          </firstModelOperation>
+        </delete>
       </ownedLineMappings>
       <ownedCreateLine name="New Message" precondition="true">
         <variables name="root" documentation="The semantic root element of the table."/>
@@ -32,7 +89,8 @@
         <variables name="container" documentation="The semantic element corresponding to the view container."/>
         <firstModelOperation xsi:type="tool:ExternalJavaAction" name="NewMessageAction" precondition="true" id="SequenceViewer.DialogInvoker">
           <parameters name="interaction" value="var:self"/>
-          <parameters name="type" value="'newNM'"/>
+          <parameters name="op" value="'create'"/>
+          <parameters name="type" value="'Msg'"/>
         </firstModelOperation>
       </ownedCreateLine>
       <ownedCreateLine name="New StateInvariant" precondition="true">
@@ -41,7 +99,8 @@
         <variables name="container" documentation="The semantic element corresponding to the view container."/>
         <firstModelOperation xsi:type="tool:ExternalJavaAction" name="NewStateInvariantAction" precondition="true" id="SequenceViewer.DialogInvoker">
           <parameters name="interaction" value="var:self"/>
-          <parameters name="type" value="'newSI'"/>
+          <parameters name="op" value="'create'"/>
+          <parameters name="type" value="'SI'"/>
         </firstModelOperation>
       </ownedCreateLine>
       <ownedCreateLine name="New Lifeline" precondition="true">
@@ -50,7 +109,18 @@
         <variables name="container" documentation="The semantic element corresponding to the view container."/>
         <firstModelOperation xsi:type="tool:ExternalJavaAction" name="NewLifelineAction" precondition="true" id="SequenceViewer.DialogInvoker">
           <parameters name="interaction" value="var:self"/>
-          <parameters name="type" value="'newLL'"/>
+          <parameters name="op" value="'create'"/>
+          <parameters name="type" value="'LL'"/>
+        </firstModelOperation>
+      </ownedCreateLine>
+      <ownedCreateLine name="New CombinedFragment" precondition="true">
+        <variables name="root" documentation="The semantic root element of the table."/>
+        <variables name="element" documentation="The semantic currently edited element."/>
+        <variables name="container" documentation="The semantic element corresponding to the view container."/>
+        <firstModelOperation xsi:type="tool:ExternalJavaAction" name="NewCombinedFragmentAction" precondition="true" id="SequenceViewer.DialogInvoker">
+          <parameters name="interaction" value="var:self"/>
+          <parameters name="type" value="'CF'"/>
+          <parameters name="op" value="'create'"/>
         </firstModelOperation>
       </ownedCreateLine>
       <ownedColumnMappings name="Diagram Column" headerLabelExpression="Diagram" featureName="owner" labelExpression="aql:self.eContainer().name"/>
@@ -104,7 +174,7 @@
             <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='blue']"/>
           </style>
         </backgroundConditionalStyle>
-        <ownedSubLines name="CF Messages" domainClass="Message" semanticCandidatesExpression="aql:self.operand.fragment->select(a | a.eClass().name = 'MessageOccurrenceSpecification')->collect(b | b.message)->asOrderedSet()">
+        <ownedSubLines name="CF Messages" domainClass="Message2" semanticCandidatesExpression="aql:self.operand.fragment->select(a | a.eClass().name = 'MessageOccurrenceSpecification')->collect(b | b.message)->asOrderedSet()">
           <defaultForeground>
             <foreGroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
           </defaultForeground>
@@ -112,15 +182,38 @@
             <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_blue']"/>
           </defaultBackground>
         </ownedSubLines>
+        <ownedSubLines name="CF InteractionOperands" domainClass="InteractionOperand" semanticCandidatesExpression="aql:self.operand">
+          <ownedSubLines name="IO Messages" domainClass="Message" semanticCandidatesExpression="aql:self.fragment->select(a | a.eClass().name = 'MessageOccurrenceSpecification')->collect(b | b.message)->asOrderedSet()"/>
+        </ownedSubLines>
+        <create name="Edit CombinedFragment" precondition="true">
+          <variables name="root" documentation="The semantic root element of the table."/>
+          <variables name="element" documentation="The semantic currently edited element."/>
+          <variables name="container" documentation="The semantic element corresponding to the view container."/>
+          <firstModelOperation xsi:type="tool:ExternalJavaAction" name="EditCombinedFragmentAction" precondition="true" id="SequenceViewer.DialogInvoker">
+            <parameters name="combinedfragment" value="var:self"/>
+            <parameters name="op" value="'edit'"/>
+            <parameters name="type" value="'CF'"/>
+          </firstModelOperation>
+        </create>
+        <create name="Add InteractionOperand" precondition="[self.eClass() = uml::CombinedFragment/]">
+          <variables name="root" documentation="The semantic root element of the table."/>
+          <variables name="element" documentation="The semantic currently edited element."/>
+          <variables name="container" documentation="The semantic element corresponding to the view container."/>
+          <firstModelOperation xsi:type="tool:ExternalJavaAction" name="AddInteractionOperandAction" precondition="true" id="SequenceViewer.DialogInvoker">
+            <parameters name="combinedfragment" value="var:self"/>
+            <parameters name="op" value="'add'"/>
+            <parameters name="type" value="'IO'"/>
+          </firstModelOperation>
+        </create>
       </ownedLineMappings>
-      <ownedLineMappings name="Interaction" domainClass="Interaction5" semanticCandidatesExpression="aql:self"/>
       <ownedCreateLine name="New Message" precondition="true">
         <variables name="root" documentation="The semantic root element of the table."/>
         <variables name="element" documentation="The semantic currently edited element."/>
         <variables name="container" documentation="The semantic element corresponding to the view container."/>
         <firstModelOperation xsi:type="tool:ExternalJavaAction" name="NewMessageAction" precondition="true" id="SequenceViewer.DialogInvoker">
           <parameters name="interaction" value="var:self"/>
-          <parameters name="type" value="'newNM'"/>
+          <parameters name="type" value="'Msg'"/>
+          <parameters name="op" value="'create'"/>
         </firstModelOperation>
       </ownedCreateLine>
       <ownedCreateLine name="New StateInvariant" precondition="true">
@@ -139,6 +232,16 @@
         <firstModelOperation xsi:type="tool:ExternalJavaAction" name="NewLifelineAction" precondition="true" id="SequenceViewer.DialogInvoker">
           <parameters name="interaction" value="var:self"/>
           <parameters name="type" value="'newLL'"/>
+        </firstModelOperation>
+      </ownedCreateLine>
+      <ownedCreateLine name="New CombinedFragment" precondition="true">
+        <variables name="root" documentation="The semantic root element of the table."/>
+        <variables name="element" documentation="The semantic currently edited element."/>
+        <variables name="container" documentation="The semantic element corresponding to the view container."/>
+        <firstModelOperation xsi:type="tool:ExternalJavaAction" name="NewCombinedFragmentAction" precondition="true" id="SequenceViewer.DialogInvoker">
+          <parameters name="interaction" value="var:self"/>
+          <parameters name="type" value="'CF'"/>
+          <parameters name="op" value="'create'"/>
         </firstModelOperation>
       </ownedCreateLine>
       <ownedColumnMappings name="Diagram" headerLabelExpression="Diagram" featureName="owner" labelExpression="aql:self.eContainer().name"/>
