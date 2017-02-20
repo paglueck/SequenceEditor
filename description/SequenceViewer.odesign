@@ -247,7 +247,6 @@
       <ownedColumnMappings name="Diagram" headerLabelExpression="Diagram" featureName="owner" labelExpression="aql:self.eContainer().name"/>
       <ownedColumnMappings name="ID" headerLabelExpression="ID" featureName="interaction" labelExpression="aql:self.eContainer().eAllContents()->select(a | a.eClass().name = 'MessageOccurrenceSpecification')->collect(b | b.message)->asOrderedSet()->indexOf(self)"/>
       <ownedColumnMappings name="Type" headerLabelExpression="Type" featureName="interactionOperator"/>
-      <ownedColumnMappings name="ServiceTest" headerLabelExpression="ServiceTest" featureName="owner" labelExpression="service:testService()"/>
       <ownedColumnMappings name="From" headerLabelExpression="From" featureName="sendEvent" labelExpression="aql:self.sendEvent.covered.represents.type.name->first()"/>
       <ownedColumnMappings name="To" headerLabelExpression="To" featureName="receiveEvent" labelExpression="aql:self.receiveEvent.covered.represents.type.name->first()"/>
       <ownedColumnMappings name="Message" headerLabelExpression="Message" featureName="signature" labelExpression="aql:if self.messageSort->toString() = 'asynchSignal' then self.name else self.signature.name endif"/>
